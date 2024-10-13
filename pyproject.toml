@@ -1,22 +1,14 @@
-[tool.poetry]
-name = "spatial-data-cooking-show"
+[project]
+name = "boston-restaurants"
 version = "0.1.0"
-description = "A demo project and template repository showing how I use SpatiaLite with Datasette for quick spatial analysis."
-authors = ["Chris Amico <eyeseast@gmail.com>"]
+description = "Add your description here"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-datasette = "^0.64.8"
-sqlite-utils = "^3.36"
-geojson-to-sqlite = "^1.1.1"
-datasette-geojson-map = "^0.4.0"
-sqlite-colorbrewer = "^0.2"
-
-
-[tool.poetry.group.dev.dependencies]
-ipython = "^8.21.0"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires-python = ">=3.12"
+dependencies = [
+    "datasette-cluster-map>=0.18.2",
+    "datasette-geojson-map>=0.5.0",
+    "datasette>=0.65",
+    "geojson-to-sqlite>=1.1.1",
+    "sqlite-colorbrewer>=0.2",
+    "sqlite-utils>=3.37",
+]

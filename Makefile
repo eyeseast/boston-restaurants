@@ -1,6 +1,12 @@
 # data
 
-DATA = data/licenses.csv data/inspections.csv data/alcohol.csv
+BBOX = "-71.068,42.353,-71.058,42.363"
+
+DATA = data/licenses.csv \
+	data/inspections.csv \
+	data/alcohol.csv \
+	data/parcels-2024.geojson
+
 DB = restaurants.db
 
 data/licenses.csv: data
@@ -14,6 +20,15 @@ data/inspections.csv: data
 data/alcohol.csv: data
 	wget -O $@ https://data.boston.gov/dataset/47d501bf-8bfa-4076-944f-da0aedb60c8a/resource/aab353c1-c797-4053-a3fc-e893f5ccf547/download/tmp_qwzoue3.csv
 	touch $@
+
+# https://data.boston.gov/dataset/parcels-20241
+data/parcels-2024.geojson: data
+	wget -O $@ https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::parcels-2024.geojson
+	touch $@
+
+# overture
+data/buildings.ndjson: data
+	uv run overturemaps download --bbox $(BBOX) -f geojsonseq --type building -o $@
 
 data:
 	mkdir -p data
@@ -34,6 +49,10 @@ alcohol: $(DB) data/alcohol.csv
 	uv run sqlite-utils insert $(DB) $@ data/alcohol.csv --csv --truncate
 	uv run sqlite-utils transform $(DB) $@ --type latitude FLOAT
 	uv run sqlite-utils transform $(DB) $@ --type longitude FLOAT
+
+parcels: $(DB) data/parcels-2024.geojson
+	uv run geojson-to-sqlite $(DB) parcels data/parcels-2024.geojson --pk MAP_PAR_ID --spatialite
+	uv run sqlite-utils create-spatial-index $(DB) parcels geometry --load-extension spatialite
 
 # workflow
 
